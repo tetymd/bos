@@ -8,8 +8,9 @@ CYLS            equ     10
                 org     0x7c00
 
                 jmp     real_start
+                nop
 
-BS_JmpBoot      db      0x90
+;BS_JmpBoot      db      0x90
 BS_OEMName      db      "BOS     "
 BPB_BytsPerSec  dw      0x0200
 BPB_SecPerClus  db      0x01
@@ -50,6 +51,7 @@ load_start:
                 mov     ch, 0
                 mov     dh, 0
                 mov     cl, 2
+
 readloop:
                 mov     si, 0
 
@@ -97,6 +99,8 @@ print:
                 mov     ah, 0x0e
                 int     0x10
                 jmp     print
+return:
+                ret
 
 error:
                 mov     si, msg_error
@@ -104,16 +108,13 @@ error:
                 jmp     end
 
 os_start:
-                mov     si, msg_end
+                mov     si, msg_osstart
                 call    print
-                jmp     0xc200
+                jmp     0xc400
 
 end:
                 hlt
                 jmp     end
-
-return:
-                ret
 
 ;-------------------------------------------------------
 ;      DATA
@@ -122,21 +123,21 @@ return:
 msg_boot:
                 db      "Booting now..."
                 db      0x0d, 0x0a
-                db      0
+                db      0x00
 
 msg_load:
-                db      "Loading success"
+                db      "Loading success!"
                 db      0x0d, 0x0a
-                db      0
+                db      0x00
 msg_error:
-                db      "Error: Loading"
+                db      "Loading error"
                 db      0x0d, 0x0a
-                db      0
+                db      0x00
 
-msg_end:
-                db      "Finish the booting"
+msg_osstart:
+                db      "Start BOS"
                 db      0x0d, 0x0a
-                db      0
+                db      0x00
 
                 times   510 -($ - $$) db 0
 MBR_sig         dw      0xaa55

@@ -6,7 +6,7 @@ AS = as --32
 NS = nasm
 LD = ld -m elf_i386
 
-QEMU = qemu-system-i386 -m 32 -fda
+QEMU = qemu-system-i386 -d in_asm -fda
 
 LS = ls -l --color
 
@@ -14,16 +14,16 @@ run:edifs
 	$(QEMU) boot.img
 	$(LS)
 
-nas: boot.s kernel.s
+nas: boot.s kloader.s
 	$(NS) -o boot.img boot.s
-	$(NS) -o kernel.sys kernel.s
+	$(NS) -o kloader.sys kloader.s
 
 edifs: nas
 	mkdir ./mount_fs_tmp
 	mount -o loop boot.img ./mount_fs_tmp
 	$(LS)
 	$(LS) ./mount_fs_tmp
-	mv kernel.sys ./mount_fs_tmp
+	mv kloader.sys ./mount_fs_tmp
 	$(LS) ./mount_fs_tmp
 	umount ./mount_fs_tmp
 	$(LS)
